@@ -29,11 +29,12 @@ autoinstall:
       # Select the Lexar NVMe by serial and stable by-id path
       - id: disk0
         type: disk
+        match:
+          serial: NGB625W100602P2202
+          model: "Lexar SSD NM790 1TB"
+          id_path: /dev/disk/by-id/nvme-Lexar_SSD_NM790_1TB_NGB625W100602P2202
         ptable: gpt
         wipe: superblock-recursive
-        serial: NGB625W100602P2202
-        path: /dev/disk/by-id/nvme-Lexar_SSD_NM790_1TB_NGB625W100602P2202
-        model: "Lexar SSD NM790 1TB"
 
       # EFI System Partition (≥ 538 MiB recommended)
       - id: part-efi
