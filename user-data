@@ -3,10 +3,9 @@ autoinstall:
   version: 1
 
   identity:
-    hostname: flow-lab
+    hostname: flow
     username: neo
-    # Replace with your own SHA-512 hash. See step 3 below.
-    password: "$6$NfRRzz/7hPfBkBBo$wpsvBcLUPwGLvTLq/BmnImIUz85OZDYQ8vb7bqTMDEfL2r1F2ShqI5g2Sepripi1sozNEkxITwMPhydpCPwA.1"
+    password: "$6$YzEkMHnDrTt/O4Mm$uK2X4ju8ReYicrELPVeSjTSoNOxhXXrgSNNYi7X9FCDVpL9fOXA3DzCTIu33s3zD1zFptV5HQj91l49VO1fZp."
 
   locale: en_CA.UTF-8
   timezone: America/Toronto
@@ -22,19 +21,21 @@ autoinstall:
   storage:
     version: 1
     config:
-      # Target Lexar NVMe by stable EUI. Replace the placeholder with your real value.
+      # Select the exact Lexar NVMe by serial and by-id path
       - id: disk0
         type: disk
         ptable: gpt
         wipe: superblock-recursive
-        match:
-          path: /dev/disk/by-id/nvme-eui.0000000623061625caf25b0410001216
+        serial: NGB625W100602P2202
+        path: /dev/disk/by-id/nvme-eui.0000000623061625caf25b0410001216
+        model: "Lexar SSD NM790 1TB"
+        grub_device: true
 
       # EFI System Partition
       - id: part-efi
         type: partition
         device: disk0
-        size: 512M
+        size: 550M
         flag: boot
       - id: fs-efi
         type: format
@@ -185,10 +186,10 @@ autoinstall:
     # zram-generator configuration
     - curtin in-target --target=/target -- bash -lc '
         cat >/etc/systemd/zram-generator.conf << "EOF"
-        [zram0]
-        zram-size = ram / 2
-        compression-algorithm = zstd
-        EOF
+[zram0]
+zram-size = ram / 2
+compression-algorithm = zstd
+EOF
       '
 
   user-data:
@@ -196,9 +197,3 @@ autoinstall:
     package_update: true
     package_upgrade: true
     package_reboot_if_required: true
-
-# Optional: SSH public keys only. Leave commented if repo is public to avoid accidental key leaks.
-#  ssh:
-#    install-server: true
-#    authorized-keys:
-#      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAA...your_public_key...
